@@ -7,10 +7,10 @@ const express = require("express");
 const session = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
-
-dotenv.config();
 const indexRouter = require("./routes");
 const userRouter = require("./routes/user");
+const { sequelize } = require("./models");
+dotenv.config();
 
 const app = express();
 app.set("port", process.env.PORT || 8080);
@@ -33,6 +33,13 @@ app.use(
     name: "session-cookie",
   })
 );
+
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("✅ DB 연결 성공");
+  })
+  .catch((err) => console.error(err));
 
 /* routes 분기 */
 app.use("/", indexRouter);
