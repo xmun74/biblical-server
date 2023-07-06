@@ -1,0 +1,26 @@
+{
+  "name": "biblical-server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "TaeGyeong",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon app",
+    "start": "nodemon app"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.4.4",
+    "sequelize": "^6.32.1",
+    "sequelize-cli": "^6.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
