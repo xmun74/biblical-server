@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
@@ -7,16 +5,20 @@ const express = require("express");
 const session = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
+const passport = require("passport");
 const indexRouter = require("./routes");
 const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
 const { sequelize } = require("./models");
+const passportConfig = require("./passport");
 dotenv.config();
 
 const app = express();
+passportConfig();
 app.set("port", process.env.PORT || 8080);
 
 app.use(morgan("dev"));
-app.use("/", express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -33,6 +35,8 @@ app.use(
     name: "session-cookie",
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 sequelize
   .sync({ force: false })
@@ -44,6 +48,7 @@ sequelize
 /* routes 분기 */
 app.use("/", indexRouter);
 app.use("/user", userRouter);
+app.use("/auth", authRouter);
 
 /* Error 처리 */
 app.use((req, res, next) => {
