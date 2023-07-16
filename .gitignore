@@ -109,3 +109,7 @@ dist
 
 # dependencies
 /node_modules
+
+# logger
+combined.log
+error.log

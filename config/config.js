@@ -1,24 +1,25 @@
 require("dotenv").config();
 module.exports = {
   development: {
-    username: "root",
-    password: process.env.SEQUELIZE_PWD,
+    username: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PWD,
     database: "biblical",
-    host: "127.0.0.1",
+    host: process.env.MYSQL_HOST,
     dialect: "mysql",
   },
   test: {
-    username: "root",
-    password: process.env.SEQUELIZE_PWD,
+    username: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PWD,
     database: "biblical_test",
-    host: "127.0.0.1",
+    host: process.env.MYSQL_HOST,
     dialect: "mysql",
   },
   production: {
-    username: "root",
-    password: process.env.SEQUELIZE_PWD,
+    username: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PWD,
     database: "biblical_production",
-    host: "127.0.0.1",
+    host: process.env.MYSQL_HOST,
     dialect: "mysql",
+    logging: false,
   },
 };
