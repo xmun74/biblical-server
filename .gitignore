@@ -113,3 +113,4 @@ dist
 # logger
 combined.log
 error.log
+*.log
