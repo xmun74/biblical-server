@@ -7,7 +7,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const passport = require("passport");
 const indexRouter = require("./routes");
-const userRouter = require("./routes/user");
+const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
@@ -62,7 +62,7 @@ sequelize
 
 /* routes 분기 */
 app.use("/", indexRouter);
-app.use("/user", userRouter);
+app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 
 /* Error 처리 */

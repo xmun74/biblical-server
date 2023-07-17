@@ -36,18 +36,23 @@ exports.login = (req, res, next) => {
         console.error(loginError);
         return next(loginError);
       }
+      const filteredUser = Object.assign({}, user.toJSON());
+      delete filteredUser.password;
       return res.status(200).send({
         message: "로그인 성공",
-        userId: user["dataValues"].id,
-        nickname: user["dataValues"].nickname,
-        email: user["dataValues"].email,
+        userId: filteredUser?.id,
+        nickname: filteredUser?.nickname,
+        email: filteredUser?.email,
       });
     });
   })(req, res, next);
 };
 
 exports.logout = (req, res) => {
-  req.logout(() => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.clearCookie("session-cookie");
+    res.clearCookie("connect.sid");
     res.redirect("/");
   });
 };
