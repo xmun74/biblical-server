@@ -12,6 +12,8 @@ const authRouter = require("./routes/auth");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 const logger = require("./logger");
+const helmet = require("helmet");
+const hpp = require("hpp");
 dotenv.config();
 
 const app = express();
