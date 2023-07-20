@@ -29,7 +29,7 @@ exports.login = (req, res, next) => {
       return next(authError);
     }
     if (!user) {
-      return res.status(400).send(`${info.message}`);
+      return res.status(400).json(info);
     }
     return req.login(user, (loginError) => {
       if (loginError) {
@@ -38,11 +38,14 @@ exports.login = (req, res, next) => {
       }
       const filteredUser = Object.assign({}, user.toJSON());
       delete filteredUser.password;
-      return res.status(200).send({
-        message: "로그인 성공",
-        userId: filteredUser?.id,
-        nickname: filteredUser?.nickname,
-        email: filteredUser?.email,
+      req.session.loggedIn = true; //
+      return res.status(200).json({
+        message: "SUCCESS",
+        userInfo: {
+          userId: filteredUser?.id,
+          nickname: filteredUser?.nickname,
+          email: filteredUser?.email,
+        },
       });
     });
   })(req, res, next);
@@ -51,8 +54,27 @@ exports.login = (req, res, next) => {
 exports.logout = (req, res) => {
   req.logout((err) => {
     if (err) return next(err);
+    req.session.loggedIn = false; //
     res.clearCookie("session-cookie");
     res.clearCookie("connect.sid");
-    res.redirect("/");
+    res.json({ message: "SUCCESS" });
+    // res.redirect("/");
   });
+};
+
+exports.checkAuth = (req, res, next) => {
+  console.log("req.session :", req.session);
+  console.log("req.user.id :", req.user?.id);
+  if (req?.user?.id) {
+    res.status(201).json({
+      loggedIn: true,
+      userInfo: {
+        userId: req?.user?.id,
+        nickname: req?.user?.nickname,
+        email: req?.user?.email,
+      },
+    });
+  } else {
+    res.status(401).json({ error: "Unauthorized", loggedIn: false });
+  }
 };
