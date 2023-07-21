@@ -10,7 +10,8 @@ exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {
-    const msg = encodeURIComponent("이미 로그인했습니다");
-    res.redirect(`/?error=${msg}`);
+    // const msg = encodeURIComponent("이미 로그인했습니다");
+    // res.redirect(`/?error=${msg}`);
+    res.status(403).json({ message: "이미 로그인했습니다" });
   }
 };

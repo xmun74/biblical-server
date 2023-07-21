@@ -19,10 +19,10 @@ module.exports = () => {
             if (isPwdMatch) {
               done(null, exUser);
             } else {
-              done(null, false, { message: "비밀번호가 틀렸습니다." });
+              done(null, false, "비밀번호가 틀렸습니다.");
             }
           } else {
-            done(null, false, { message: "존재하지 않은 이메일입니다." });
+            done(null, false, "존재하지 않은 이메일입니다.");
           }
         } catch (err) {
           console.error(err);
