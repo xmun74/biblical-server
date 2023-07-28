@@ -30,17 +30,14 @@ exports.getMe = async (req, res, next) => {
 };
 
 exports.patchNickname = async (req, res, next) => {
-  const body = req.body;
+  const { nickname } = req.body;
   try {
-    if (req?.user) {
-      await User.update(
-        { nickname: body.nickname },
-        { where: { id: req.user.id } }
-      );
-      return res.status(200).json({ nickname: body.nickname });
-    } else {
-      return res.status(200).json({ error: "Unauthorized" });
+    const exNick = await User.findOne({ where: { nickname } });
+    if (req?.user?.nickname !== exNick?.nickname && exNick) {
+      return res.status(409).send("중복된 닉네임입니다");
     }
+    await User.update({ nickname: nickname }, { where: { id: req.user.id } });
+    return res.status(200).json({ nickname: nickname });
   } catch (err) {
     console.error(err);
     return next(err);
