@@ -20,7 +20,7 @@ class User extends Sequelize.Model {
         },
         img: {
           type: Sequelize.STRING(200),
-          allowNull: false,
+          allowNull: true,
         },
         provider: {
           type: Sequelize.ENUM("local", "kakao"),
