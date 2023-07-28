@@ -29,7 +29,7 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-exports.patchUser = async (req, res, next) => {
+exports.patchNickname = async (req, res, next) => {
   const body = req.body;
   try {
     if (req?.user) {
@@ -40,6 +40,27 @@ exports.patchUser = async (req, res, next) => {
       return res.status(200).json({ nickname: body.nickname });
     } else {
       return res.status(200).json({ error: "Unauthorized" });
+    }
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
+// 이미지 작업해야함
+exports.patchUserImage = async (req, res, next) => {
+  try {
+    if (req.file) {
+      await User.update(
+        { img: `/${req.file.filename}` },
+        { where: { id: req.user.id } }
+      );
+      return res.status(200).json({
+        fileName: req.file.filename,
+        userImgUrl: `/${req.file.filename}`,
+      });
+    } else {
+      return res.status(200).json({ error: "이미지 파일이 없습니다." });
     }
   } catch (err) {
     console.error(err);
@@ -90,8 +111,6 @@ exports.getUser = async (req, res, next) => {
     if (userWithoutPwd) {
       const userData = userWithoutPwd.toJSON();
       userData.Posts = userData.Posts.length;
-      userData.Followers = userData.Followers.length;
-      userData.Followings = userData.Followings.length;
       return res.status(200).json(userData);
     } else {
       return res.status(404).json("존재하지 않는 회원입니다.");

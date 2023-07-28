@@ -17,6 +17,10 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(100),
           allowNull: true,
         },
+        img: {
+          type: Sequelize.STRING(200),
+          allowNull: false,
+        },
         provider: {
           type: Sequelize.ENUM("local", "kakao"),
           allowNull: false,
