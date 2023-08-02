@@ -6,6 +6,8 @@ const {
   getMe,
   patchNickname,
   patchUserImage,
+  follow,
+  unFollow,
 } = require("../controllers/users");
 const multer = require("multer");
 const fs = require("fs");
@@ -44,5 +46,7 @@ router.patch("/image", isLoggedIn, upload.single("userImg"), patchUserImage);
 
 /* /users/:id - 유저 조회 */
 router.route("/:id").get(isLoggedIn, getUser);
+router.route("/:id/follow").post(isLoggedIn, follow);
+router.route("/:id/follow").delete(isLoggedIn, unFollow);
 
 module.exports = router;

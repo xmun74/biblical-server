@@ -14,8 +14,8 @@ exports.getMe = async (req, res, next) => {
             model: Post,
             attributes: ["id"],
           },
-          { model: User, as: "Followings", attributes: ["id"] },
-          { model: User, as: "Followers", attributes: ["id"] },
+          { model: User, as: "Followings", attributes: ["id", "nickname"] },
+          { model: User, as: "Followers", attributes: ["id", "nickname"] },
         ],
       });
       console.log("userWithoutPwd :", userWithoutPwd);
@@ -101,18 +101,41 @@ exports.getUser = async (req, res, next) => {
           model: Post,
           attributes: ["id"],
         },
-        { model: User, as: "Followings", attributes: ["id"] },
-        { model: User, as: "Followers", attributes: ["id"] },
+        { model: User, as: "Followings", attributes: ["id", "nickname"] },
+        { model: User, as: "Followers", attributes: ["id", "nickname"] },
       ],
     });
-    if (userWithoutPwd) {
-      const userData = userWithoutPwd.toJSON();
-      userData.Posts = userData.Posts.length;
-      return res.status(200).json(userData);
-    } else {
-      return res.status(404).json("존재하지 않는 회원입니다.");
-    }
+    return res.status(200).json(userWithoutPwd);
   } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
+exports.follow = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (user) {
+      await user.addFollowings(parseInt(req.params.id, 10));
+      res.send("팔로우 성공");
+    } else {
+      res.statue(404).send("존재하지 않는 유저입니다.");
+    }
+  } catch (error) {
+    console.error(err);
+    return next(err);
+  }
+};
+exports.unFollow = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.params.id } });
+    if (user) {
+      await user.removeFollowers(req.user.id);
+      return res.status(200).json({ id: parseInt(req.params.id, 10) });
+    } else {
+      return res.statue(403).send("존재하지 않는 유저입니다.");
+    }
+  } catch (error) {
     console.error(err);
     return next(err);
   }
