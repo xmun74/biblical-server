@@ -9,6 +9,7 @@ const passport = require("passport");
 const indexRouter = require("./routes");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
+const meetingRouter = require("./routes/meetings");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 const logger = require("./logger");
@@ -18,6 +19,7 @@ dotenv.config();
 
 const app = express();
 passportConfig();
+const webSocket = require("./socket");
 app.set("port", process.env.PORT || 8080);
 
 if (process.env.NODE_ENV === "production") {
@@ -64,6 +66,7 @@ sequelize
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
+app.use("/meetings", meetingRouter);
 
 /* Error 처리 */
 app.use((req, res, next) => {
@@ -77,8 +80,9 @@ app.use((err, req, res, next) => {
   res.status(500).send(err.message);
 });
 
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   console.log(
     `🌏 RUN http://localhost:${app.get("port")} | ${app.get("port")} PORT`
   );
 });
+webSocket(server);
