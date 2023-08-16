@@ -1,15 +1,20 @@
 const Meeting = require("../models/meeting");
 
 exports.postMeeting = async (req, res, next) => {
-  const { title, introduce } = req.body;
+  const { name, introduce } = req.body;
   try {
-    const meeting = await Meeting.create({ title, introduce });
+    const meeting = await Meeting.create({
+      name,
+      introduce,
+      hostId: req?.user?.id,
+    });
+    console.log("🎁 모임생성 :", meeting);
     return res.status(200).json({
       code: "OK",
       message: "모임이 생성됐습니다.",
       meeting: {
         meetId: meeting?.id,
-        title: meeting?.title,
+        name: meeting?.name,
       },
     });
   } catch (err) {
@@ -27,7 +32,7 @@ exports.getMeetings = async (req, res, next) => {
       include: [
         {
           model: Meeting,
-          attributes: ["id", "title"],
+          attributes: ["id", "name"],
         },
       ],
     });

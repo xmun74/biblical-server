@@ -45,9 +45,13 @@ class User extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.User.hasMany(db.Post);
+    db.User.hasMany(db.Post, {
+      sourceKey: "id",
+      foreignKey: "userId",
+    });
     db.User.belongsToMany(db.Meeting, {
       through: "MeetingUser",
+      as: "Members",
     });
     db.User.belongsToMany(db.User, {
       foreignKey: "followingId",

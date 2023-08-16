@@ -4,7 +4,7 @@ class Meeting extends Sequelize.Model {
   static initiate(sequelize) {
     Meeting.init(
       {
-        title: {
+        name: {
           type: Sequelize.STRING(20),
           allowNull: false,
           unique: true,
@@ -12,6 +12,22 @@ class Meeting extends Sequelize.Model {
         introduce: {
           type: Sequelize.STRING(300),
           allowNull: false,
+        },
+        hostId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+        },
+        members: {
+          type: Sequelize.JSON,
+          allowNull: true,
+        },
+        tags: {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
+        address: {
+          type: Sequelize.TEXT,
+          allowNull: true,
         },
       },
       {
@@ -30,6 +46,7 @@ class Meeting extends Sequelize.Model {
     db.Meeting.hasMany(db.Post);
     db.Meeting.belongsToMany(db.User, {
       through: "MeetingUser",
+      as: "Members",
     });
     db.Meeting.belongsToMany(db.Hashtag, {
       through: "MeetingHashtag",

@@ -4,9 +4,25 @@ class Post extends Sequelize.Model {
   static initiate(sequelize) {
     Post.init(
       {
+        author: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+        },
+        title: {
+          type: Sequelize.STRING(20),
+          allowNull: false,
+        },
         content: {
           type: Sequelize.STRING(140),
           allowNull: false,
+        },
+        views: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+        },
+        tags: {
+          type: Sequelize.TEXT,
+          allowNull: true,
         },
         img: {
           type: Sequelize.STRING(200),
@@ -26,7 +42,10 @@ class Post extends Sequelize.Model {
     );
   }
   static associate(db) {
-    db.Post.belongsTo(db.User);
+    db.Post.belongsTo(db.User, {
+      targetKey: "id",
+      foreignKey: "userId",
+    });
     db.Post.belongsTo(db.Meeting);
     db.Post.belongsToMany(db.Hashtag, {
       through: "PostHashtag",
