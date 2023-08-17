@@ -5,7 +5,9 @@ const {
   deleteMeeting,
   getMeetings,
   postMeeting,
-} = require("../controllers/meeting");
+  postMeetingInviteLink,
+  postMeetingInvite,
+} = require("../controllers/meetings");
 
 const router = express.Router();
 
@@ -17,5 +19,10 @@ router
   .route("/:meetId")
   .get(isLoggedIn, getMeeting)
   .delete(isLoggedIn, deleteMeeting);
+
+/* /meetings/1/invite - 모임초대 링크 생성 */
+router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
+/* /meetings/1/invite/uuid - 모임초대 생성 */
+router.post("/:meetId/invite/:uuid", isLoggedIn, postMeetingInvite);
 
 module.exports = router;

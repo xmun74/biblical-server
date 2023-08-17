@@ -4,13 +4,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     // meetings 테이블에 tags 컬럼 추가
-    return queryInterface.addColumn("meetings", "tags", {
-      type: Sequelize.TEXT,
+    return queryInterface.addColumn("meetings", "inviteLink", {
+      type: Sequelize.STRING,
       allowNull: true,
     });
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.removeColumn("meetings", "tags");
+    return queryInterface.removeColumn("meetings", "inviteLink");
   },
 };

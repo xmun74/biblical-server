@@ -21,6 +21,10 @@ class Meeting extends Sequelize.Model {
           type: Sequelize.JSON,
           allowNull: true,
         },
+        inviteLink: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
         tags: {
           type: Sequelize.TEXT,
           allowNull: true,

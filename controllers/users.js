@@ -18,7 +18,7 @@ exports.getMe = async (req, res, next) => {
           { model: User, as: "Followers", attributes: ["id", "nickname"] },
         ],
       });
-      console.log("userWithoutPwd :", userWithoutPwd);
+      // console.log("userWithoutPwd :", userWithoutPwd);
       return res.status(200).json(userWithoutPwd);
     } else {
       return res.status(200).json(null);
@@ -44,7 +44,6 @@ exports.patchNickname = async (req, res, next) => {
   }
 };
 
-// 이미지 작업해야함
 exports.patchUserImage = async (req, res, next) => {
   try {
     if (req.file) {
