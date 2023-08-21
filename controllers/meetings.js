@@ -71,22 +71,34 @@ exports.deleteMeeting = async (req, res, next) => {
 exports.postMeetingInviteLink = async (req, res, next) => {
   const { meetId } = req?.params;
   try {
-    const inviteId = await bcrypt.hash(meetId, 10);
-    let meeting = await Meeting.update(
-      { inviteLink: inviteId },
-      { where: { id: meetId } }
-    );
-    console.log("🎁모임 링크 추가 후 :", meeting);
-    return res.status(200).json({ inviteLink: inviteId });
+    const exMeeting = await Meeting.findOne({ where: { id: meetId } });
+    if (exMeeting?.inviteLink) {
+      // console.log("🎁링크이미있음 :", exMeeting.inviteLink);
+      return res.status(200).json({ inviteLink: exMeeting?.inviteLink });
+    } else {
+      const hashedId = await bcrypt.hash(meetId, 10);
+      const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+      let inviteId = hashedId.replace(reg, "");
+      await Meeting.update({ inviteLink: inviteId }, { where: { id: meetId } });
+      // console.log("🎁링크 추가함 :", inviteId);
+      return res.status(200).json({ inviteLink: inviteId });
+    }
   } catch (err) {
     console.error(err);
     return next(err);
   }
 };
 exports.postMeetingInvite = async (req, res, next) => {
-  const { inviteToken } = req?.params;
+  const { meetId, inviteLink } = req?.params;
   try {
-    return res.status(200).json({ message: "모임초대 생성" });
+    const exMeeting = await Meeting.findOne({ where: { id: meetId } });
+    const isInviteMatch = inviteLink === exMeeting?.inviteLink;
+    // console.log("😎 맞음?", inviteLink === exMeeting?.inviteLink);
+    if (isInviteMatch) {
+      return res.status(200).json({ message: "모임초대 완료" });
+    } else {
+      return res.status(200).json({ message: "유효하지 않은 링크입니다." });
+    }
   } catch (err) {
     console.error(err);
     return next(err);

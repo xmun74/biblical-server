@@ -23,6 +23,6 @@ router
 /* /meetings/1/invite - 모임초대 링크 생성 */
 router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
 /* /meetings/1/invite/uuid - 모임초대 생성 */
-router.post("/:meetId/invite/:uuid", isLoggedIn, postMeetingInvite);
+router.post("/:meetId/invite/:inviteLink", isLoggedIn, postMeetingInvite);
 
 module.exports = router;
