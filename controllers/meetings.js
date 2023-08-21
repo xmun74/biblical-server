@@ -95,10 +95,32 @@ exports.postMeetingInvite = async (req, res, next) => {
     const isInviteMatch = inviteLink === exMeeting?.inviteLink;
     // console.log("😎 맞음?", inviteLink === exMeeting?.inviteLink);
     if (isInviteMatch) {
+      exMeeting.addMembers(parseInt(req?.user.id, 10));
       return res.status(200).json({ message: "모임초대 완료" });
     } else {
       return res.status(200).json({ message: "유효하지 않은 링크입니다." });
     }
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+exports.getMembers = async (req, res, next) => {
+  const { meetId } = req?.params;
+  try {
+    const meetMembers = await Meeting.findOne({
+      where: { id: meetId },
+      attributes: ["id"],
+      include: [
+        {
+          model: User,
+          as: "Members",
+          attributes: ["id", "img", "nickname"],
+        },
+      ],
+    });
+    console.log("✅ 멤버조회 :", meetMembers);
+    return res.status(200).json(meetMembers);
   } catch (err) {
     console.error(err);
     return next(err);

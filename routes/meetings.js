@@ -7,6 +7,7 @@ const {
   postMeeting,
   postMeetingInviteLink,
   postMeetingInvite,
+  getMembers,
 } = require("../controllers/meetings");
 
 const router = express.Router();
@@ -24,5 +25,7 @@ router
 router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
 /* /meetings/1/invite/uuid - 모임초대 생성 */
 router.post("/:meetId/invite/:inviteLink", isLoggedIn, postMeetingInvite);
+/* /meetings/1/members - 모임멤버 조회 */
+router.get("/:meetId/members", isLoggedIn, getMembers);
 
 module.exports = router;
