@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const Meeting = require("../models/meeting");
 const User = require("../models/user");
+const Post = require("../models/post");
 
 exports.postMeeting = async (req, res, next) => {
   const { name, introduce } = req.body;
@@ -13,7 +14,7 @@ exports.postMeeting = async (req, res, next) => {
     await meeting.addMembers(parseInt(req?.user.id, 10));
     // console.log("🎁 모임생성 :", meeting);
     return res.status(200).json({
-      code: "OK",
+      code: "SUCC",
       message: "모임이 생성됐습니다.",
       meeting: {
         meetId: meeting?.id,
@@ -55,12 +56,42 @@ exports.getMeeting = async (req, res, next) => {
     return next(err);
   }
 };
+/** 모임 삭제 - 모임장 권한 */
 exports.deleteMeeting = async (req, res, next) => {
   try {
     await Meeting.destroy({
       where: { id: req?.params?.meetId },
     });
     return res.status(200).send("모임 삭제");
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+/** 모임 탈퇴 */
+exports.deleteWithdraw = async (req, res, next) => {
+  const { meetId } = req?.params;
+  try {
+    const exMeeting = await Meeting.findOne({
+      where: { id: meetId },
+      attributes: ["id"],
+      include: [
+        {
+          model: User,
+          as: "Members",
+          where: { id: req?.user?.id }, // 가입 여부
+          attributes: ["id"],
+        },
+      ],
+    });
+    if (exMeeting) {
+      exMeeting.removeMembers(parseInt(req?.user.id, 10));
+      return res.status(200).json({ code: "SUCC", message: "모임 탈퇴 성공" });
+    } else {
+      return res
+        .status(400)
+        .json({ code: "FAIL", message: "가입하지 않은 모임입니다." });
+    }
   } catch (err) {
     console.error(err);
     return next(err);

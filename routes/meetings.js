@@ -9,6 +9,7 @@ const {
   postMeetingInvite,
   getMembers,
   getMeetingInviteInfo,
+  deleteWithdraw,
 } = require("../controllers/meetings");
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router
   .get(isLoggedIn, getMeeting)
   .delete(isLoggedIn, deleteMeeting);
 
+router.delete("/:meetId/withdraw", isLoggedIn, deleteWithdraw);
 /* /meetings/1/invite - 모임초대 링크 생성 */
 router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
 /* /meetings/1/invite/inviteLink - 모임초대 생성, 모임명 조회 */
