@@ -1,5 +1,5 @@
 const express = require("express");
-const { isLoggedIn } = require("../middlewares");
+const { isLoggedIn, isNotLoggedIn } = require("../middlewares");
 const {
   getMeeting,
   deleteMeeting,
@@ -8,6 +8,7 @@ const {
   postMeetingInviteLink,
   postMeetingInvite,
   getMembers,
+  getMeetingInviteInfo,
 } = require("../controllers/meetings");
 
 const router = express.Router();
@@ -23,8 +24,11 @@ router
 
 /* /meetings/1/invite - 모임초대 링크 생성 */
 router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
-/* /meetings/1/invite/uuid - 모임초대 생성 */
-router.post("/:meetId/invite/:inviteLink", isLoggedIn, postMeetingInvite);
+/* /meetings/1/invite/inviteLink - 모임초대 생성, 모임명 조회 */
+router
+  .route("/:meetId/invite/:inviteLink")
+  .get(isLoggedIn, getMeetingInviteInfo)
+  .post(isLoggedIn, postMeetingInvite);
 /* /meetings/1/members - 모임멤버 조회 */
 router.get("/:meetId/members", isLoggedIn, getMembers);
 

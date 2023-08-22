@@ -88,6 +88,21 @@ exports.postMeetingInviteLink = async (req, res, next) => {
     return next(err);
   }
 };
+exports.getMeetingInviteInfo = async (req, res, next) => {
+  const { meetId, inviteLink } = req?.params;
+  try {
+    const exMeeting = await Meeting.findOne({ where: { id: meetId } });
+    const isInviteMatch = inviteLink === exMeeting?.inviteLink;
+    if (isInviteMatch) {
+      return res.status(200).json({ meeting: { name: exMeeting.name } });
+    } else {
+      return res.status(400).json({ message: "유효하지 않은 링크입니다." });
+    }
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
 exports.postMeetingInvite = async (req, res, next) => {
   const { meetId, inviteLink } = req?.params;
   try {
@@ -98,7 +113,7 @@ exports.postMeetingInvite = async (req, res, next) => {
       exMeeting.addMembers(parseInt(req?.user.id, 10));
       return res.status(200).json({ message: "모임초대 완료" });
     } else {
-      return res.status(200).json({ message: "유효하지 않은 링크입니다." });
+      return res.status(400).json({ message: "유효하지 않은 링크입니다." });
     }
   } catch (err) {
     console.error(err);
