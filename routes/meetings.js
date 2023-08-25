@@ -1,37 +1,41 @@
 const express = require("express");
-const { isLoggedIn, isNotLoggedIn } = require("../middlewares");
-const {
-  getMeeting,
-  deleteMeeting,
-  getMeetings,
-  postMeeting,
-  postMeetingInviteLink,
-  postMeetingInvite,
-  getMembers,
-  getMeetingInviteInfo,
-  deleteWithdraw,
-} = require("../controllers/meetings");
+const { isLoggedIn } = require("../middlewares");
+const meetController = require("../controllers/meetings");
 
 const router = express.Router();
 
-/* /meetings - 모임 전체 조회, 모임 생성 */
-router.route("/").get(isLoggedIn, getMeetings).post(isLoggedIn, postMeeting);
+router
+  .route("/")
+  /* GET /meetings - 모임 전체 조회 */
+  .get(isLoggedIn, meetController.getMeetings)
+  /* POST /meetings - 모임 생성 */
+  .post(isLoggedIn, meetController.postMeeting);
 
-/* /meetings/1 - 모임 1개 조회, 모임 탈퇴 */
 router
   .route("/:meetId")
-  .get(isLoggedIn, getMeeting)
-  .delete(isLoggedIn, deleteMeeting);
+  /* GET /meetings/1 - 모임 1개 조회 */
+  .get(isLoggedIn, meetController.getMeeting)
+  /* DELELTE /meetings/1 - 모임 삭제 */
+  .delete(isLoggedIn, meetController.deleteMeeting);
 
-router.delete("/:meetId/withdraw", isLoggedIn, deleteWithdraw);
-/* /meetings/1/invite - 모임초대 링크 생성 */
-router.post("/:meetId/invite", isLoggedIn, postMeetingInviteLink);
-/* /meetings/1/invite/inviteLink - 모임초대 생성, 모임명 조회 */
+/* DELETE /meetings/1/withdraw - 모임 탈퇴 */
+router.delete("/:meetId/withdraw", isLoggedIn, meetController.deleteWithdraw);
+
+/* POST /meetings/1/invite - 모임초대 링크 생성 */
+router.post(
+  "/:meetId/invite",
+  isLoggedIn,
+  meetController.postMeetingInviteLink
+);
+
 router
   .route("/:meetId/invite/:inviteLink")
-  .get(isLoggedIn, getMeetingInviteInfo)
-  .post(isLoggedIn, postMeetingInvite);
-/* /meetings/1/members - 모임멤버 조회 */
-router.get("/:meetId/members", isLoggedIn, getMembers);
+  /* GET /meetings/1/invite/inviteLink - 모임명 조회 */
+  .get(isLoggedIn, meetController.getMeetingInviteInfo)
+  /* POST /meetings/1/invite/inviteLink - 모임초대 생성 */
+  .post(isLoggedIn, meetController.postMeetingInvite);
+
+/* GET /meetings/1/members - 모임멤버 조회 */
+router.get("/:meetId/members", isLoggedIn, meetController.getMembers);
 
 module.exports = router;

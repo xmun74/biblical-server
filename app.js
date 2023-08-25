@@ -10,6 +10,8 @@ const indexRouter = require("./routes");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const meetingRouter = require("./routes/meetings");
+const postsRouter = require("./routes/posts");
+const postRouter = require("./routes/post");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 const logger = require("./logger");
@@ -67,6 +69,8 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/meetings", meetingRouter);
+app.use("/posts", postsRouter);
+app.use("/post", postRouter);
 
 /* Error 처리 */
 app.use((req, res, next) => {

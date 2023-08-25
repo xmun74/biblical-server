@@ -32,10 +32,10 @@ module.exports = (server) => {
   const io = SocketIO(server, {
     path: "/socket.io",
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.FRONTEND_URL,
     },
   });
-  io.on("connection", (socket) => {
+  /* io.on("connection", (socket) => {
     const req = socket.request;
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     console.log("✅ 새 클라이언트 접속", ip, socket.id, req.id);
@@ -52,5 +52,5 @@ module.exports = (server) => {
     socket.interval = setInterval(() => {
       socket.emit("news", "Hello Socket.IO");
     }, 5000);
-  });
+  }); */
 };

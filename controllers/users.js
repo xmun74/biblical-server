@@ -7,7 +7,13 @@ exports.getMe = async (req, res, next) => {
       const userWithoutPwd = await User.findOne({
         where: { id: req.user?.id },
         attributes: {
-          exclude: ["password", "provider"],
+          exclude: [
+            "password",
+            "provider",
+            "createdAt",
+            "deletedAt",
+            "updatedAt",
+          ],
         },
         include: [
           {
@@ -18,7 +24,6 @@ exports.getMe = async (req, res, next) => {
           { model: User, as: "Followers", attributes: ["id", "nickname"] },
         ],
       });
-      // console.log("userWithoutPwd :", userWithoutPwd);
       return res.status(200).json(userWithoutPwd);
     } else {
       return res.status(200).json(null);

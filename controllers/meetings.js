@@ -12,7 +12,6 @@ exports.postMeeting = async (req, res, next) => {
       hostId: req?.user?.id,
     });
     await meeting.addMembers(parseInt(req?.user.id, 10));
-    // console.log("🎁 모임생성 :", meeting);
     return res.status(200).json({
       code: "SUCC",
       message: "모임이 생성됐습니다.",
@@ -32,7 +31,6 @@ exports.getMeetings = async (req, res, next) => {
     const meetings = await user.getMembers({
       attributes: ["name"],
     });
-    console.log("🌏 유저+ 모임", meetings);
     return res.status(201).json({ meetings });
   } catch (err) {
     console.error(err);
@@ -47,7 +45,6 @@ exports.getMeeting = async (req, res, next) => {
         exclude: ["createdAt", "updatedAt"],
       },
     });
-    console.log("✅ 모임조회 :", exMeeting);
     return res.status(200).json({
       meeting: exMeeting,
     });
@@ -104,14 +101,12 @@ exports.postMeetingInviteLink = async (req, res, next) => {
   try {
     const exMeeting = await Meeting.findOne({ where: { id: meetId } });
     if (exMeeting?.inviteLink) {
-      // console.log("🎁링크이미있음 :", exMeeting.inviteLink);
       return res.status(200).json({ inviteLink: exMeeting?.inviteLink });
     } else {
       const hashedId = await bcrypt.hash(meetId, 10);
       const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
       let inviteId = hashedId.replace(reg, "");
       await Meeting.update({ inviteLink: inviteId }, { where: { id: meetId } });
-      // console.log("🎁링크 추가함 :", inviteId);
       return res.status(200).json({ inviteLink: inviteId });
     }
   } catch (err) {
@@ -139,7 +134,6 @@ exports.postMeetingInvite = async (req, res, next) => {
   try {
     const exMeeting = await Meeting.findOne({ where: { id: meetId } });
     const isInviteMatch = inviteLink === exMeeting?.inviteLink;
-    // console.log("😎 맞음?", inviteLink === exMeeting?.inviteLink);
     if (isInviteMatch) {
       exMeeting.addMembers(parseInt(req?.user.id, 10));
       return res.status(200).json({ message: "모임초대 완료" });
@@ -165,7 +159,6 @@ exports.getMembers = async (req, res, next) => {
         },
       ],
     });
-    console.log("✅ 멤버조회 :", meetMembers);
     return res.status(200).json(meetMembers);
   } catch (err) {
     console.error(err);

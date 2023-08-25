@@ -6,6 +6,12 @@ module.exports = {
     database: "biblical",
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
+    timezone: "Asia/Seoul",
+    dialectOptions: {
+      charset: "utf8mb4",
+      dateStrings: true,
+      typeCast: true,
+    },
   },
   test: {
     username: process.env.MYSQL_USERNAME,

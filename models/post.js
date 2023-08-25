@@ -4,10 +4,6 @@ class Post extends Sequelize.Model {
   static initiate(sequelize) {
     Post.init(
       {
-        author: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-        },
         title: {
           type: Sequelize.STRING(20),
           allowNull: false,
