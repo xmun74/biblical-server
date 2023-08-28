@@ -12,6 +12,7 @@ const authRouter = require("./routes/auth");
 const meetingRouter = require("./routes/meetings");
 const postsRouter = require("./routes/posts");
 const postRouter = require("./routes/post");
+const bibleRouter = require("./routes/bible");
 const { sequelize } = require("./models");
 const passportConfig = require("./passport");
 const logger = require("./logger");
@@ -71,6 +72,7 @@ app.use("/auth", authRouter);
 app.use("/meetings", meetingRouter);
 app.use("/posts", postsRouter);
 app.use("/post", postRouter);
+app.use("/bible", bibleRouter);
 
 /* Error 처리 */
 app.use((req, res, next) => {
