@@ -5,17 +5,17 @@ class Bible extends Sequelize.Model {
     Bible.init(
       {
         book: {
-          type: Sequelize.NUMERIC,
+          type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
           primaryKey: true,
         },
         chapter: {
-          type: Sequelize.NUMERIC,
+          type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
           primaryKey: true,
         },
         verse: {
-          type: Sequelize.NUMERIC,
+          type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
           primaryKey: true,
         },
