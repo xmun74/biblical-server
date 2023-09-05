@@ -8,5 +8,3 @@ declare global {
     interface User extends IUser {}
   }
 }
-
-type FileNameCallback = (error: Error | null, filename: string) => void;

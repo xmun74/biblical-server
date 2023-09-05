@@ -1,14 +1,6 @@
 import express from "express";
 import { isLoggedIn } from "../middlewares";
-import {
-  getUser,
-  deleteUser,
-  getMe,
-  patchNickname,
-  patchUserImage,
-  follow,
-  unFollow,
-} from "../controllers/users";
+import userController from "../controllers/users";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -34,15 +26,23 @@ const upload = multer({
 });
 
 /* /users 내 프로필 조회/탈퇴 */
-router.route("/").get(isLoggedIn, getMe).delete(isLoggedIn, deleteUser);
+router
+  .route("/")
+  .get(isLoggedIn, userController.getMe)
+  .delete(isLoggedIn, userController.deleteUser);
 
 /**  닉네임/이미지 수정 */
-router.patch("/nickname", isLoggedIn, patchNickname);
-router.patch("/image", isLoggedIn, upload.single("userImg"), patchUserImage);
+router.patch("/nickname", isLoggedIn, userController.patchNickname);
+router.patch(
+  "/image",
+  isLoggedIn,
+  upload.single("userImg"),
+  userController.patchUserImage
+);
 
 /* /users/:id - 유저 조회 */
-router.route("/:id").get(isLoggedIn, getUser);
-router.route("/:id/follow").post(isLoggedIn, follow);
-router.route("/:id/follow").delete(isLoggedIn, unFollow);
+router.route("/:id").get(isLoggedIn, userController.getUser);
+router.route("/:id/follow").post(isLoggedIn, userController.follow);
+router.route("/:id/follow").delete(isLoggedIn, userController.unFollow);
 
 export default router;

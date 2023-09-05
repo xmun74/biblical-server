@@ -148,7 +148,7 @@ const unFollow: RequestHandler = async (req, res, next) => {
     return next(err);
   }
 };
-export {
+export default {
   getMe,
   patchNickname,
   patchUserImage,
