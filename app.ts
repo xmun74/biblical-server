@@ -11,7 +11,7 @@ import passportConfig from "./passport";
 import logger from "./logger";
 import helmet from "helmet";
 import hpp from "hpp";
-import redis from "redis";
+import redis, { createClient } from "redis";
 import RedisStore from "connect-redis";
 import webSocket from "./socket";
 
@@ -24,10 +24,12 @@ import postRouter from "./routes/post";
 import bibleRouter from "./routes/bible";
 
 dotenv.config();
-const redisClient = redis.createClient({
-  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+const redisClient = createClient({
+  socket: {
+    host: `${process.env.REDIS_HOST}`,
+    port: Number(process.env.REDIS_PORT),
+  },
   password: process.env.REDIS_PWD,
-  // legacyMode: true,
 });
 redisClient.connect().catch(console.error);
 const app = express();
