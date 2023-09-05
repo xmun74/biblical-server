@@ -1,9 +1,9 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
-const User = require("../models/user");
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcrypt";
+import User from "../models/user";
 
-module.exports = () => {
+export default () => {
   passport.use(
     new LocalStrategy(
       {
@@ -19,10 +19,10 @@ module.exports = () => {
             if (isPwdMatch) {
               done(null, exUser);
             } else {
-              done(null, false, "비밀번호가 틀렸습니다.");
+              done(null, false, { message: "비밀번호가 틀렸습니다." });
             }
           } else {
-            done(null, false, "존재하지 않은 이메일입니다.");
+            done(null, false, { message: "존재하지 않은 이메일입니다." });
           }
         } catch (err) {
           console.error(err);

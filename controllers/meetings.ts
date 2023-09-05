@@ -1,34 +1,41 @@
-const bcrypt = require("bcrypt");
-const Meeting = require("../models/meeting");
-const User = require("../models/user");
-const Post = require("../models/post");
+import bcrypt from "bcrypt";
+import Meeting from "../models/meeting";
+import User from "../models/user";
+import { RequestHandler } from "express";
 
-exports.postMeeting = async (req, res, next) => {
+const postMeeting: RequestHandler = async (req, res, next) => {
   const { name, introduce } = req.body;
   try {
-    const meeting = await Meeting.create({
-      name,
-      introduce,
-      hostId: req?.user?.id,
-    });
-    await meeting.addMembers(parseInt(req?.user.id, 10));
-    return res.status(200).json({
-      code: "SUCC",
-      message: "모임이 생성됐습니다.",
-      meeting: {
-        meetId: meeting?.id,
-        name: meeting?.name,
-      },
-    });
+    if (req?.user) {
+      const meeting = await Meeting.create({
+        name,
+        introduce,
+        hostId: req?.user?.id,
+      });
+      await meeting.addMember(req?.user?.id);
+      return res.status(200).json({
+        code: "SUCC",
+        message: "모임이 생성됐습니다.",
+        meeting: {
+          meetId: meeting?.id,
+          name: meeting?.name,
+        },
+      });
+    } else {
+      return res.status(401).json({
+        code: 401,
+        message: "로그인을 해주세요.",
+      });
+    }
   } catch (err) {
     console.error(err);
     return next(err);
   }
 };
-exports.getMeetings = async (req, res, next) => {
+const getMeetings: RequestHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req?.user?.id } });
-    const meetings = await user.getMembers({
+    const meetings = await user?.getMember({
       attributes: ["name"],
     });
     return res.status(201).json({ meetings });
@@ -37,7 +44,7 @@ exports.getMeetings = async (req, res, next) => {
     return next(err);
   }
 };
-exports.getMeeting = async (req, res, next) => {
+const getMeeting: RequestHandler = async (req, res, next) => {
   try {
     const exMeeting = await Meeting.findOne({
       where: { id: req?.params?.meetId },
@@ -54,7 +61,7 @@ exports.getMeeting = async (req, res, next) => {
   }
 };
 /** 모임 삭제 - 모임장 권한 */
-exports.deleteMeeting = async (req, res, next) => {
+const deleteMeeting: RequestHandler = async (req, res, next) => {
   try {
     await Meeting.destroy({
       where: { id: req?.params?.meetId },
@@ -66,7 +73,7 @@ exports.deleteMeeting = async (req, res, next) => {
   }
 };
 /** 모임 탈퇴 */
-exports.deleteWithdraw = async (req, res, next) => {
+const deleteWithdraw: RequestHandler = async (req, res, next) => {
   const { meetId } = req?.params;
   try {
     const exMeeting = await Meeting.findOne({
@@ -75,14 +82,14 @@ exports.deleteWithdraw = async (req, res, next) => {
       include: [
         {
           model: User,
-          as: "Members",
+          as: "Member",
           where: { id: req?.user?.id }, // 가입 여부
           attributes: ["id"],
         },
       ],
     });
     if (exMeeting) {
-      exMeeting.removeMembers(parseInt(req?.user.id, 10));
+      exMeeting.removeMember(req?.user?.id);
       return res.status(200).json({ code: "SUCC", message: "모임 탈퇴 성공" });
     } else {
       return res
@@ -96,7 +103,7 @@ exports.deleteWithdraw = async (req, res, next) => {
 };
 
 /** 모임초대 링크생성 */
-exports.postMeetingInviteLink = async (req, res, next) => {
+const postMeetingInviteLink: RequestHandler = async (req, res, next) => {
   const { meetId } = req?.params;
   try {
     const exMeeting = await Meeting.findOne({ where: { id: meetId } });
@@ -114,7 +121,7 @@ exports.postMeetingInviteLink = async (req, res, next) => {
     return next(err);
   }
 };
-exports.getMeetingInviteInfo = async (req, res, next) => {
+const getMeetingInviteInfo: RequestHandler = async (req, res, next) => {
   const { meetId, inviteLink } = req?.params;
   try {
     const exMeeting = await Meeting.findOne({ where: { id: meetId } });
@@ -129,13 +136,13 @@ exports.getMeetingInviteInfo = async (req, res, next) => {
     return next(err);
   }
 };
-exports.postMeetingInvite = async (req, res, next) => {
+const postMeetingInvite: RequestHandler = async (req, res, next) => {
   const { meetId, inviteLink } = req?.params;
   try {
     const exMeeting = await Meeting.findOne({ where: { id: meetId } });
     const isInviteMatch = inviteLink === exMeeting?.inviteLink;
-    if (isInviteMatch) {
-      exMeeting.addMembers(parseInt(req?.user.id, 10));
+    if (isInviteMatch && req?.user) {
+      exMeeting.addMember(req?.user?.id);
       return res.status(200).json({ message: "모임초대 완료" });
     } else {
       return res.status(400).json({ message: "유효하지 않은 링크입니다." });
@@ -145,7 +152,7 @@ exports.postMeetingInvite = async (req, res, next) => {
     return next(err);
   }
 };
-exports.getMembers = async (req, res, next) => {
+const getMembers: RequestHandler = async (req, res, next) => {
   const { meetId } = req?.params;
   try {
     const meetMembers = await Meeting.findOne({
@@ -154,7 +161,7 @@ exports.getMembers = async (req, res, next) => {
       include: [
         {
           model: User,
-          as: "Members",
+          as: "Member",
           attributes: ["id", "img", "nickname"],
         },
       ],
@@ -164,4 +171,15 @@ exports.getMembers = async (req, res, next) => {
     console.error(err);
     return next(err);
   }
+};
+export default {
+  postMeeting,
+  getMeetings,
+  getMeeting,
+  deleteMeeting,
+  deleteWithdraw,
+  postMeetingInviteLink,
+  getMeetingInviteInfo,
+  postMeetingInvite,
+  getMembers,
 };

@@ -1,43 +1,49 @@
-const Hashtag = require("../models/hashtag");
-const Meeting = require("../models/meeting");
-const Post = require("../models/post");
-const User = require("../models/user");
+import { RequestHandler } from "express";
+import Hashtag from "../models/hashtag";
+import Meeting from "../models/meeting";
+import Post from "../models/post";
+import User from "../models/user";
 
 /**  POST /post */
-exports.uploadPost = async (req, res, next) => {
+const uploadPost: RequestHandler = async (req, res, next) => {
   const { title, content, tags, meetId } = req?.body;
   try {
     const meeting = await Meeting.findOne({ where: { id: meetId } });
     const post = await Post.create({
       title,
       content,
-      userId: req?.user.id,
+      userId: req?.user?.id,
     });
-    await meeting.addPost(post);
-
-    if (tags) {
-      const result = await Promise.all(
-        tags.map((tag) =>
-          Hashtag.findOrCreate({
-            where: { title: tag.slice(1).toLowerCase() },
-          })
-        )
-      );
-      await post.addPostHashtag(result.map((v) => v[0]));
-    }
-    const postData = await Post.findOne({
-      where: { id: post.id },
-      attributes: {
-        exclude: ["updatedAt"],
-      },
-      include: [
-        {
-          model: User, // 작성자
-          attributes: ["id", "nickname", "img"],
+    if (meeting) {
+      await meeting.addPost(post);
+      if (tags) {
+        const result = await Promise.all(
+          tags.map((tag: string) =>
+            Hashtag.findOrCreate({
+              where: { title: tag.slice(1).toLowerCase() },
+            })
+          )
+        );
+        await post.addHashtags(result.map((v) => v[0]));
+      }
+      const postData = await Post.findOne({
+        where: { id: post.id },
+        attributes: {
+          exclude: ["updatedAt"],
         },
-      ],
-    });
-    return res.status(201).json({ code: 201, data: postData });
+        include: [
+          {
+            model: User, // 작성자
+            attributes: ["id", "nickname", "img"],
+          },
+        ],
+      });
+      return res.status(201).json({ code: 201, data: postData });
+    } else {
+      return res
+        .status(400)
+        .json({ code: 400, message: "존재하지 않는 모임입니다." });
+    }
   } catch (err) {
     console.error(err);
     return next(err);
@@ -45,7 +51,7 @@ exports.uploadPost = async (req, res, next) => {
 };
 
 /**  GET /post/1 */
-exports.getPost = async (req, res, next) => {
+const getPost: RequestHandler = async (req, res, next) => {
   try {
     const isPosted = await Post.findOne({ where: { id: req?.params.postId } });
     if (!isPosted) {
@@ -69,7 +75,7 @@ exports.getPost = async (req, res, next) => {
   }
 };
 /**  PATCH /post/1 */
-exports.patchPost = async (req, res, next) => {
+const patchPost: RequestHandler = async (req, res, next) => {
   const { title, content, tags } = req?.body;
   try {
     await Post.update(
@@ -81,11 +87,11 @@ exports.patchPost = async (req, res, next) => {
         where: { id: req?.params?.postId },
       }
     );
-    const post = await Post.findOne({ where: { id: req?.params.postId } });
-    if (tags) {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (post && tags) {
       // tag 수정
       const result = await Promise.all(
-        tags.map((tag) =>
+        tags.map((tag: string) =>
           Hashtag.findOrCreate({
             where: { title: tag.slice(1).toLowerCase() },
           })
@@ -107,24 +113,29 @@ exports.patchPost = async (req, res, next) => {
   }
 };
 /**  DELETE /post/1 */
-exports.deletePost = async (req, res, next) => {
+const deletePost: RequestHandler = async (req, res, next) => {
   try {
     const exPost = await Post.findOne({
-      where: { id: req?.params.postId, userId: req?.user.id },
+      where: { id: req?.params.postId, userId: req?.user?.id },
+    });
+    const meeting = await Meeting.findOne({
+      where: { id: Number(req?.query?.meetId) },
     });
     if (!exPost) {
       return res
         .status(404)
         .json({ code: 404, message: "존재하지 않는 게시글입니다." });
     }
-    const meeting = await Meeting.findOne({
-      where: { id: req?.query?.meetId },
-    });
+    if (!meeting) {
+      return res
+        .status(404)
+        .json({ code: 404, message: "존재하지 않는 모임입니다." });
+    }
     await meeting.removePost(exPost);
     await Post.destroy({
       where: {
         id: req?.params.postId,
-        userId: req?.user.id,
+        userId: req?.user?.id,
       },
     });
     return res
@@ -135,3 +146,5 @@ exports.deletePost = async (req, res, next) => {
     return next(err);
   }
 };
+
+export default { uploadPost, getPost, patchPost, deletePost };

@@ -1,5 +1,5 @@
-const fs = require("fs");
-const { sequelize } = require("./models");
+import fs from "fs";
+import { sequelize } from "./models";
 
 const sqlFile = fs.readFileSync(`개역한글판_korHRV.sql`, "utf-8");
 const dropTableQuery = "DROP TABLE IF EXISTS bible_korHRV;";
@@ -13,8 +13,10 @@ const executeQueries = async () => {
   try {
     await sequelize.query(dropTableQuery);
     await sequelize.query(createTableQuery);
-    for (const query of insertQueries) {
-      await sequelize.query(query);
+    if (insertQueries) {
+      for (const query of insertQueries) {
+        await sequelize.query(query);
+      }
     }
   } catch (err) {
     console.error(err);

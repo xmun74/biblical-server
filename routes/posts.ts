@@ -1,8 +1,7 @@
-const express = require("express");
-const { isLoggedIn } = require("../middlewares");
-const Post = require("../models/post");
-const User = require("../models/user");
-const Meeting = require("../models/meeting");
+import express from "express";
+import { isLoggedIn } from "../middlewares";
+import User from "../models/user";
+import Meeting from "../models/meeting";
 
 const router = express.Router();
 
@@ -10,7 +9,14 @@ const router = express.Router();
 router.get("/", isLoggedIn, async (req, res, next) => {
   // 특정 모임의 게시글 - 작성자 포함
   try {
-    const meeting = await Meeting.findOne({ where: { id: req?.query.meetId } });
+    const meeting = await Meeting.findOne({
+      where: { id: Number(req?.query.meetId) },
+    });
+    if (!meeting) {
+      return res
+        .status(404)
+        .json({ code: 404, message: "존재하지 않는 모임입니다." });
+    }
     const posts = await meeting.getPosts({
       limit: 10,
       order: [["createdAt", "DESC"]],
@@ -24,13 +30,11 @@ router.get("/", isLoggedIn, async (req, res, next) => {
         },
       ],
     });
-
-    // console.log("😎 게시글 전체조회 :", posts);
-    res.status(200).json({ code: 200, posts });
+    return res.status(200).json({ code: 200, posts });
   } catch (err) {
     console.error(err);
     return next(err);
   }
 });
 
-module.exports = router;
+export default router;

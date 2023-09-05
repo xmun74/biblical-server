@@ -1,7 +1,7 @@
-const express = require("express");
-const passport = require("passport");
-const { isNotLoggedIn, isLoggedIn } = require("../middlewares");
-const { signup, login, logout } = require("../controllers/auth");
+import express from "express";
+import passport from "passport";
+import { isNotLoggedIn, isLoggedIn } from "../middlewares";
+import { signup, login, logout } from "../controllers/auth";
 
 const router = express.Router();
 
@@ -20,4 +20,4 @@ router.get(
   }
 );
 
-module.exports = router;
+export default router;

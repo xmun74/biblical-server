@@ -1,5 +1,22 @@
-require("dotenv").config();
-module.exports = {
+import dotenv from "dotenv";
+dotenv.config();
+
+interface Config {
+  username: string;
+  password: string;
+  database: string;
+  host: string;
+  dialect: "mysql";
+  timezone?: string;
+  dialectOptions?: {
+    charset?: string;
+    dateStrings?: boolean;
+    typeCast?: boolean;
+  };
+  logging?: boolean;
+}
+
+export default {
   development: {
     username: process.env.MYSQL_USERNAME,
     password: process.env.MYSQL_PWD,
@@ -28,4 +45,4 @@ module.exports = {
     dialect: "mysql",
     logging: false,
   },
-};
+} as Record<string, Config>;

@@ -1,16 +1,16 @@
-const express = require("express");
-const Bible = require("../models/bible");
+import express from "express";
+import Bible from "../models/bible";
 
 const router = express.Router();
 
 /** GET /bible - 성경 조회 */
 router.get("/", async (req, res, next) => {
-  const { book, chapter } = req.query;
+  const { book, chapter } = req?.query;
   try {
     const bible = await Bible.findAll({
       where: {
-        book,
-        chapter,
+        book: Number(book),
+        chapter: Number(chapter),
       },
     });
     return res.status(200).json({
@@ -48,7 +48,10 @@ router.get("/count/verse", async (req, res, next) => {
   const { book, chapter } = req.query;
   try {
     const result = await Bible.findOne({
-      where: { book, chapter },
+      where: {
+        book: Number(book),
+        chapter: Number(chapter),
+      },
       order: [["verse", "DESC"]],
       attributes: ["book", "chapter", "verse"],
     });
@@ -60,4 +63,4 @@ router.get("/count/verse", async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

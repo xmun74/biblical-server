@@ -25,23 +25,24 @@ module.exports = (server) => {
   });
 };
  */
+import http from "http";
+import { Server } from "socket.io";
 
-const SocketIO = require("socket.io");
-
-module.exports = (server) => {
-  const io = SocketIO(server, {
+export default (server: http.Server) => {
+  const io = new Server(server, {
     path: "/socket.io",
     cors: {
       origin: process.env.FRONTEND_URL,
     },
   });
+
   /* io.on("connection", (socket) => {
     const req = socket.request;
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    console.log("✅ 새 클라이언트 접속", ip, socket.id, req.id);
+    console.log("✅ 새 클라이언트 접속", ip, socket.id); //req.id
     socket.on("disconnect", () => {
       console.log("❌ 클라이언트 접속 해제", ip, socket.id);
-      clearInterval(socket.interval);
+      clearInterval(interval);
     });
     socket.on("error", (err) => {
       console.error(err);
@@ -49,7 +50,7 @@ module.exports = (server) => {
     socket.on("reply", (data) => {
       console.log(data);
     });
-    socket.interval = setInterval(() => {
+    const interval = setInterval(() => {
       socket.emit("news", "Hello Socket.IO");
     }, 5000);
   }); */

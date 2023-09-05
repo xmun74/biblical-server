@@ -1,6 +1,6 @@
-const express = require("express");
-const { isLoggedIn } = require("../middlewares");
-const meetController = require("../controllers/meetings");
+import express from "express";
+import { isLoggedIn } from "../middlewares";
+import meetController from "../controllers/meetings";
 
 const router = express.Router();
 
@@ -38,4 +38,4 @@ router
 /* GET /meetings/1/members - 모임멤버 조회 */
 router.get("/:meetId/members", isLoggedIn, meetController.getMembers);
 
-module.exports = router;
+export default router;

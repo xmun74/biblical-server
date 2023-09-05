@@ -1,13 +1,13 @@
-const passport = require("passport");
-const local = require("./localStrategy");
-const kakao = require("./kakaoStrategy");
-const User = require("../models/user");
+import passport from "passport";
+import local from "./localStrategy";
+import kakao from "./kakaoStrategy";
+import User from "../models/user";
 
-module.exports = () => {
+export default () => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
-  passport.deserializeUser((id, done) => {
+  passport.deserializeUser((id: number, done) => {
     User.findOne({
       where: { id },
       include: [

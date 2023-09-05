@@ -1,6 +1,6 @@
-const express = require("express");
-const { isLoggedIn } = require("../middlewares");
-const postController = require("../controllers/post");
+import express from "express";
+import { isLoggedIn } from "../middlewares";
+import postController from "../controllers/post";
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router
   /** DELETE /post/1 */
   .delete(isLoggedIn, postController.deletePost);
 
-module.exports = router;
+export default router;

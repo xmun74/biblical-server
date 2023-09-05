@@ -1,4 +1,6 @@
-exports.isLoggedIn = (req, res, next) => {
+import { RequestHandler } from "express";
+
+const isLoggedIn: RequestHandler = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -6,12 +8,11 @@ exports.isLoggedIn = (req, res, next) => {
     res.status(403).send("로그인 필요");
   }
 };
-exports.isNotLoggedIn = (req, res, next) => {
+const isNotLoggedIn: RequestHandler = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {
-    // const msg = encodeURIComponent("이미 로그인했습니다");
-    // res.redirect(`/?error=${msg}`);
     res.status(403).json({ message: "이미 로그인했습니다" });
   }
 };
+export { isLoggedIn, isNotLoggedIn };

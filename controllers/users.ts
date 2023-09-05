@@ -1,11 +1,12 @@
-const Post = require("../models/post");
-const User = require("../models/user");
+import { RequestHandler } from "express";
+import Post from "../models/post";
+import User from "../models/user";
 
-exports.getMe = async (req, res, next) => {
+const getMe: RequestHandler = async (req, res, next) => {
   try {
     if (req?.user) {
       const userWithoutPwd = await User.findOne({
-        where: { id: req.user?.id },
+        where: { id: req?.user?.id },
         attributes: {
           exclude: [
             "password",
@@ -34,14 +35,14 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-exports.patchNickname = async (req, res, next) => {
+const patchNickname: RequestHandler = async (req, res, next) => {
   const { nickname } = req.body;
   try {
     const exNick = await User.findOne({ where: { nickname } });
     if (req?.user?.nickname !== exNick?.nickname && exNick) {
       return res.status(409).send("중복된 닉네임입니다");
     }
-    await User.update({ nickname: nickname }, { where: { id: req.user.id } });
+    await User.update({ nickname: nickname }, { where: { id: req.user?.id } });
     return res.status(200).json({ nickname: nickname });
   } catch (err) {
     console.error(err);
@@ -49,19 +50,22 @@ exports.patchNickname = async (req, res, next) => {
   }
 };
 
-exports.patchUserImage = async (req, res, next) => {
+const patchUserImage: RequestHandler = async (req, res, next) => {
   try {
     if (req.file) {
+      console.log("❌", req.file?.filename);
       await User.update(
-        { img: `/${req.file.filename}` },
-        { where: { id: req.user.id } }
+        { img: `/${req.file?.filename}` },
+        { where: { id: req?.user?.id } }
       );
       return res.status(200).json({
-        fileName: req.file.filename,
-        userImgUrl: `/${req.file.filename}`,
+        fileName: req.file?.filename,
+        userImgUrl: `/${req.file?.filename}`,
       });
     } else {
-      return res.status(200).json({ error: "이미지 파일이 없습니다." });
+      return res
+        .status(404)
+        .json({ code: 404, message: "이미지 파일이 없습니다." });
     }
   } catch (err) {
     console.error(err);
@@ -69,7 +73,7 @@ exports.patchUserImage = async (req, res, next) => {
   }
 };
 
-exports.deleteUser = async (req, res, next) => {
+const deleteUser: RequestHandler = async (req, res, next) => {
   try {
     if (req?.user) {
       await User.destroy({
@@ -93,7 +97,7 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 /**  /users/1  */
-exports.getUser = async (req, res, next) => {
+const getUser: RequestHandler = async (req, res, next) => {
   try {
     const userWithoutPwd = await User.findOne({
       where: { id: req?.params.id },
@@ -116,31 +120,40 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-exports.follow = async (req, res, next) => {
+const follow: RequestHandler = async (req, res, next) => {
   try {
-    const user = await User.findOne({ where: { id: req.user.id } });
+    const user = await User.findOne({ where: { id: req?.user?.id } });
     if (user) {
-      await user.addFollowings(parseInt(req.params.id, 10));
+      await user.addFollowing(parseInt(req.params.id, 10));
       res.send("팔로우 성공");
     } else {
-      res.statue(404).send("존재하지 않는 유저입니다.");
+      res.status(404).send("존재하지 않는 유저입니다.");
     }
-  } catch (error) {
+  } catch (err) {
     console.error(err);
     return next(err);
   }
 };
-exports.unFollow = async (req, res, next) => {
+const unFollow: RequestHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { id: req.params.id } });
     if (user) {
-      await user.removeFollowers(req.user.id);
+      await user.removeFollower(req?.user?.id);
       return res.status(200).json({ id: parseInt(req.params.id, 10) });
     } else {
-      return res.statue(403).send("존재하지 않는 유저입니다.");
+      return res.status(403).send("존재하지 않는 유저입니다.");
     }
-  } catch (error) {
+  } catch (err) {
     console.error(err);
     return next(err);
   }
+};
+export {
+  getMe,
+  patchNickname,
+  patchUserImage,
+  deleteUser,
+  getUser,
+  follow,
+  unFollow,
 };

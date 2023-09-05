@@ -1,28 +1,29 @@
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
-const express = require("express");
-const session = require("express-session");
-const morgan = require("morgan");
-const cors = require("cors");
-const passport = require("passport");
-const indexRouter = require("./routes");
-const usersRouter = require("./routes/users");
-const authRouter = require("./routes/auth");
-const meetingRouter = require("./routes/meetings");
-const postsRouter = require("./routes/posts");
-const postRouter = require("./routes/post");
-const bibleRouter = require("./routes/bible");
-const { sequelize } = require("./models");
-const passportConfig = require("./passport");
-const logger = require("./logger");
-const helmet = require("helmet");
-const hpp = require("hpp");
-dotenv.config();
+import express, { ErrorRequestHandler } from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import session from "express-session";
+import morgan from "morgan";
+import cors from "cors";
+import passport from "passport";
+import { sequelize } from "./models";
+import passportConfig from "./passport";
+import logger from "./logger";
+import helmet from "helmet";
+import hpp from "hpp";
+import webSocket from "./socket";
 
+import indexRouter from "./routes";
+import usersRouter from "./routes/users";
+import authRouter from "./routes/auth";
+import meetingRouter from "./routes/meetings";
+import postsRouter from "./routes/posts";
+import postRouter from "./routes/post";
+import bibleRouter from "./routes/bible";
+
+dotenv.config();
 const app = express();
 passportConfig();
-const webSocket = require("./socket");
 app.set("port", process.env.PORT || 8080);
 
 if (process.env.NODE_ENV === "production") {
@@ -38,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.use(morgan("dev"));
 }
-app.use("/", express.static(path.join(__dirname, "uploads")));
+app.use("/", express.static(path.join(process.env.PWD!, "uploads")));
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.urlencoded({ extended: false }));
@@ -47,7 +48,7 @@ app.use(
   session({
     resave: false,
     saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
+    secret: process.env.COOKIE_SECRET!,
     cookie: {
       httpOnly: true,
       secure: false,
@@ -81,10 +82,11 @@ app.use((req, res, next) => {
   logger.error(error.message);
   next(error);
 });
-app.use((err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err);
-  res.status(500).send(err.message);
-});
+  res.status(err.statue || 500).send(err.message);
+};
+app.use(errorHandler);
 
 const server = app.listen(app.get("port"), () => {
   console.log(
@@ -92,3 +94,5 @@ const server = app.listen(app.get("port"), () => {
   );
 });
 webSocket(server);
+
+export default app;

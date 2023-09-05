@@ -1,7 +1,19 @@
-const Sequelize = require("sequelize");
+import Sequelize, {
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 
-class Bible extends Sequelize.Model {
-  static initiate(sequelize) {
+class Bible extends Model<
+  InferAttributes<Bible>,
+  InferCreationAttributes<Bible>
+> {
+  declare book: number;
+  declare chapter: number;
+  declare verse: number;
+  declare content: string;
+
+  static initiate(sequelize: Sequelize.Sequelize) {
     Bible.init(
       {
         book: {
@@ -21,7 +33,7 @@ class Bible extends Sequelize.Model {
         },
         content: {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: false,
         },
       },
       {
@@ -35,7 +47,7 @@ class Bible extends Sequelize.Model {
       }
     );
   }
-  static associate(db) {}
+  static associate() {}
 }
 
-module.exports = Bible;
+export default Bible;

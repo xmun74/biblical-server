@@ -1,6 +1,6 @@
-const express = require("express");
-const { isLoggedIn } = require("../middlewares");
-const {
+import express from "express";
+import { isLoggedIn } from "../middlewares";
+import {
   getUser,
   deleteUser,
   getMe,
@@ -8,10 +8,10 @@ const {
   patchUserImage,
   follow,
   unFollow,
-} = require("../controllers/users");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+} from "../controllers/users";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
 const router = express.Router();
 
 try {
@@ -26,10 +26,6 @@ const upload = multer({
       done(null, "uploads/");
     },
     filename(req, file, done) {
-      // multer v1.4.5-lts.1의 라이브러리 문제로 한글깨짐 현상 발생하여 latin1을 UTF-8로 변경하는 작업 수행
-      file.originalname = Buffer.from(file.originalname, "latin1").toString(
-        "utf8"
-      );
       const ext = path.extname(file.originalname);
       done(null, path.basename(file.originalname, ext) + Date.now() + ext);
     },
@@ -49,4 +45,4 @@ router.route("/:id").get(isLoggedIn, getUser);
 router.route("/:id/follow").post(isLoggedIn, follow);
 router.route("/:id/follow").delete(isLoggedIn, unFollow);
 
-module.exports = router;
+export default router;
