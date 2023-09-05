@@ -11,6 +11,8 @@ import passportConfig from "./passport";
 import logger from "./logger";
 import helmet from "helmet";
 import hpp from "hpp";
+import redis from "redis";
+import RedisStore from "connect-redis";
 import webSocket from "./socket";
 
 import indexRouter from "./routes";
@@ -22,6 +24,12 @@ import postRouter from "./routes/post";
 import bibleRouter from "./routes/bible";
 
 dotenv.config();
+const redisClient = redis.createClient({
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  password: process.env.REDIS_PWD,
+  // legacyMode: true,
+});
+redisClient.connect().catch(console.error);
 const app = express();
 passportConfig();
 app.set("port", process.env.PORT || 8080);
@@ -44,18 +52,23 @@ app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(
-  session({
-    resave: false,
-    saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET!,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-    name: "session-cookie",
-  })
-);
+const sessionOption = {
+  name: "session-cookie",
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET!,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+  proxy: false,
+  store: new RedisStore({ client: redisClient }),
+};
+if (process.env.NODE_ENV === "production") {
+  // sessionOption.proxy = true; // https 노드앞에 다른 서버 둘때
+  // sessionOption.cookie.secure = true; // https 적용시
+}
+app.use(session(sessionOption));
 app.use(passport.initialize());
 app.use(passport.session());
 

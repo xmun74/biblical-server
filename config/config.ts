@@ -36,6 +36,12 @@ export default {
     database: "biblical_test",
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
+    timezone: "Asia/Seoul",
+    dialectOptions: {
+      charset: "utf8mb4",
+      dateStrings: true,
+      typeCast: true,
+    },
   },
   production: {
     username: process.env.MYSQL_USERNAME,
@@ -44,5 +50,11 @@ export default {
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
     logging: false,
+    timezone: "Asia/Seoul",
+    dialectOptions: {
+      charset: "utf8mb4",
+      dateStrings: true,
+      typeCast: true,
+    },
   },
 } as Record<string, Config>;
