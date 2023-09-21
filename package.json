@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "dev": "cross-env NODE_ENV=development nodemon dist/app",
-    "start": "cross-env NODE_ENV=production nodemon dist/app"
+    "dev": "yarn build && cross-env NODE_ENV=development nodemon dist/app",
+    "start": "yarn build && cross-env NODE_ENV=production nodemon dist/app"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
