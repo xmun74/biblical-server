@@ -60,7 +60,7 @@ class Meeting extends Model<
           allowNull: false,
         },
         hostId: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.INTEGER.UNSIGNED,
           allowNull: false,
         },
         members: {
