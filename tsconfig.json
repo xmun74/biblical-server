@@ -3,7 +3,7 @@
     "outDir": "dist",
     "target": "ES2016",
     "module": "CommonJS",
-    "allowJs": false,
+    "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
