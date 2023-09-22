@@ -1,7 +1,7 @@
 import fs from "fs";
 import { sequelize } from "./models";
 
-const sqlFile = fs.readFileSync(`개역한글판_korHRV.sql`, "utf-8");
+const sqlFile = fs.readFileSync(`../개역한글판_korHRV.sql`, "utf-8");
 const dropTableQuery = "DROP TABLE IF EXISTS bible_korHRV;";
 const createTableQuery =
   "CREATE TABLE bible_korHRV (book INT UNSIGNED, chapter INT UNSIGNED, verse INT UNSIGNED, content TEXT, PRIMARY KEY(book, chapter, verse));";
