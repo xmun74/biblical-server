@@ -51,8 +51,8 @@ if (process.env.NODE_ENV === "production") {
 }
 app.use("/", express.static(path.resolve(__dirname, "../uploads"))); // 이미지
 app.use(express.json());
-// app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-app.use(cors()); // test
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+// app.use(cors()); // test
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 const sessionOption = {
