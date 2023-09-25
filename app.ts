@@ -69,7 +69,7 @@ const sessionOption = {
     sameSite: "strict", // 같은 도메인일때 쿠키 전송 가능
     domain: ".biblebiblical.site",
   } as CookieOptions,
-  proxy: false,
+  proxy: true, // 로드 밸런서 뒤에있음,
   store: new RedisStore({ client: redisClient }),
 };
 if (process.env.NODE_ENV === "production") {
