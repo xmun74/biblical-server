@@ -2,7 +2,7 @@ import express, { ErrorRequestHandler } from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import session from "express-session";
+import session, { CookieOptions } from "express-session";
 import morgan from "morgan";
 import cors from "cors";
 import passport from "passport";
@@ -55,6 +55,7 @@ app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 // app.use(cors()); // test
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
 const sessionOption = {
   name: "session-cookie",
   resave: false,
@@ -63,13 +64,16 @@ const sessionOption = {
   cookie: {
     httpOnly: true,
     secure: false,
-  },
+    sameSite: "none", // 같은 도메인일때 쿠키 전송 가능
+  } as CookieOptions,
   proxy: false,
   store: new RedisStore({ client: redisClient }),
 };
 if (process.env.NODE_ENV === "production") {
+  sessionOption.cookie.sameSite = "strict";
+  sessionOption.cookie.domain = ".biblebiblical.site";
+  sessionOption.cookie.secure = true; // https 적용시
   // sessionOption.proxy = true; // https 노드앞에 다른 서버 둘때
-  // sessionOption.cookie.secure = true; // https 적용시
 }
 app.use(session(sessionOption));
 app.use(passport.initialize());
