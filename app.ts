@@ -63,16 +63,17 @@ const sessionOption = {
   secret: process.env.COOKIE_SECRET!,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: "none", // 같은 도메인일때 쿠키 전송 가능
+    secure: true,
+    // secure: false,
+    // sameSite: "none",
+    sameSite: "strict", // 같은 도메인일때 쿠키 전송 가능
+    domain: ".biblebiblical.site",
   } as CookieOptions,
   proxy: false,
   store: new RedisStore({ client: redisClient }),
 };
 if (process.env.NODE_ENV === "production") {
-  sessionOption.cookie.sameSite = "strict";
-  sessionOption.cookie.domain = ".biblebiblical.site";
-  sessionOption.cookie.secure = true; // https 적용시
+  // sessionOption.cookie.secure = true; // https 적용시
   // sessionOption.proxy = true; // https 노드앞에 다른 서버 둘때
 }
 app.use(session(sessionOption));
