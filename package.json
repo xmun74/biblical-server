@@ -5,9 +5,13 @@
   "author": "TaeGyeong",
   "license": "MIT",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "dev": "yarn build && cross-env NODE_ENV=development nodemon dist/app",
-    "start": "cross-env NODE_ENV=production pm2 start dist/app.js"
+    "start:dev": "cross-env NODE_ENV=development node dist/app.js",
+    "start:prod": "cross-env NODE_ENV=production pm2 start dist/app.js",
+    "prerestart": "tsc",
+    "restart": "pm2 restart 0",
+    "stop": "pm2 delete 0"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

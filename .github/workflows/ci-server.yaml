@@ -1,0 +1,38 @@
+name: CI-server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: ⎔ Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: ⎔ Install packages
+        run: yarn
+
+      - name: ⎔ Build server
+        env:
+          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET}}
+          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME}}
+          MYSQL_PWD: ${{ secrets.MYSQL_PWD}}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST}}
+          PORT: ${{ secrets.PORT}}
+          KAKAO_ID: ${{ secrets.KAKAO_ID}}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL}}
+          REDIS_HOST: ${{ secrets.REDIS_HOST}}
+          REDIS_PORT: ${{ secrets.REDIS_PORT}}
+          REDIS_PWD: ${{ secrets.REDIS_PWD}}
+        run: |
+          yarn build
