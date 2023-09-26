@@ -9,7 +9,6 @@
     "dev": "yarn build && cross-env NODE_ENV=development nodemon dist/app",
     "start:dev": "cross-env NODE_ENV=development node dist/app.js",
     "start:prod": "cross-env NODE_ENV=production pm2 start dist/app.js",
-    "prerestart": "tsc",
     "restart": "pm2 restart 0",
     "stop": "pm2 delete 0"
   },
