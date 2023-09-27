@@ -23,7 +23,7 @@ export default {
     database: "biblical",
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
-    timezone: "Asia/Seoul",
+    timezone: "+09:00",
     dialectOptions: {
       charset: "utf8mb4",
       dateStrings: true,
@@ -36,7 +36,7 @@ export default {
     database: "biblical_test",
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
-    timezone: "Asia/Seoul",
+    timezone: "+09:00",
     dialectOptions: {
       charset: "utf8mb4",
       dateStrings: true,
@@ -50,7 +50,7 @@ export default {
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
     logging: false,
-    timezone: "Asia/Seoul",
+    timezone: "+09:00",
     dialectOptions: {
       charset: "utf8mb4",
       dateStrings: true,
