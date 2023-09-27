@@ -46,7 +46,7 @@ jobs:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PEM_KEY }}
-          source: "dist.tar.gz"
+          source: "dist.tar.gz,package.json"
           target: ${{ secrets.SERVER_PATH }}
 
       - name: ⎔ Execute shell script
