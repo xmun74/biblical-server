@@ -11,7 +11,7 @@ import passportConfig from "./passport";
 import logger from "./logger";
 import helmet from "helmet";
 import hpp from "hpp";
-import redis, { createClient } from "redis";
+import { createClient } from "redis";
 import RedisStore from "connect-redis";
 import webSocket from "./socket";
 
@@ -49,10 +49,9 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.use(morgan("dev"));
 }
-app.use("/", express.static(path.resolve(__dirname, "../uploads"))); // 이미지
+app.use("/", express.static(path.resolve(__dirname, "/uploads"))); // 이미지
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-// app.use(cors()); // test
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 

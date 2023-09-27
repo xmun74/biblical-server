@@ -58,7 +58,5 @@ jobs:
           script: |
             cd ${{ secrets.SERVER_PATH }}
             sudo tar -xzvf dist.tar.gz
-            git pull origin master
-            yarn
             pm2 kill
-            yarn start:prod
+            yarn cross-env NODE_ENV=production pm2 start dist/app.js
