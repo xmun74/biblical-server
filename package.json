@@ -50,7 +50,6 @@
     "@types/passport-kakao": "0.2.1",
     "@types/passport-local": "^1.0.35",
     "@types/sequelize": "^4.28.15",
-    "@types/socket.io": "^3.0.2",
     "nodemon": "^2.0.22"
   }
 }
