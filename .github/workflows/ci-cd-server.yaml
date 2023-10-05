@@ -58,10 +58,6 @@ jobs:
           script: |
             cd ${{ secrets.SERVER_PATH }}
             sudo tar -xzvf dist.tar.gz
-            rm -rf node_modules
-            rm package-lock.json
-            rm  yarn.lock
-            npm cache clear --force
             yarn
             pm2 kill
             yarn cross-env NODE_ENV=production pm2 start dist/app.js
