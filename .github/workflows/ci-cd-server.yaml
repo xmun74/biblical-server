@@ -34,6 +34,9 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST}}
           REDIS_PORT: ${{ secrets.REDIS_PORT}}
           REDIS_PWD: ${{ secrets.REDIS_PWD}}
+          S3_KEY_ID: ${{ secrets.S3_KEY_ID}}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY}}
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME}}
         run: |
           yarn build
 
