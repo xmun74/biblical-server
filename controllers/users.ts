@@ -52,21 +52,19 @@ const patchNickname: RequestHandler = async (req, res, next) => {
 
 const uploadUserImage: RequestHandler = async (req, res, next) => {
   try {
-    if (req.file) {
-      console.log("❌", req.file?.filename);
-      await User.update(
-        { img: `/${req.file?.filename}` },
-        { where: { id: req?.user?.id } }
-      );
+    const filePath = req?.file?.location;
+    if (filePath) {
+      console.log("❌", filePath);
+      await User.update({ img: filePath }, { where: { id: req?.user?.id } });
       console.log("✅이미지저장 :", { url: req.file });
       return res.status(200).json({
-        fileName: req.file?.filename,
-        userImgUrl: `/${req.file?.filename}`,
+        fileName: req?.file?.originalname,
+        userImgUrl: filePath,
       });
     } else {
       return res
         .status(404)
-        .json({ code: 404, message: "이미지 파일이 없습니다." });
+        .json({ code: 404, message: "유효한 이미지 경로가 없습니다." });
     }
   } catch (err) {
     console.error(err);

@@ -31,8 +31,10 @@ const upload = multer({
       const fileName = `original/${Date.now()}_${file.originalname}`;
       cb(null, fileName);
     },
+    acl: "public-read-write",
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB 제한
+
   /* storage: multer.diskStorage({
     destination(req, file, done) {
       done(null, "uploads/");
