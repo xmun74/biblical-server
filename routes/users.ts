@@ -52,11 +52,11 @@ router
 
 /**  닉네임/이미지 수정 */
 router.patch("/nickname", isLoggedIn, userController.patchNickname);
-router.patch(
+router.post(
   "/image",
   isLoggedIn,
   upload.single("userImg"),
-  userController.patchUserImage
+  userController.uploadUserImage
 );
 
 /* /users/:id - 유저 조회 */

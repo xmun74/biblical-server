@@ -50,7 +50,7 @@ const patchNickname: RequestHandler = async (req, res, next) => {
   }
 };
 
-const patchUserImage: RequestHandler = async (req, res, next) => {
+const uploadUserImage: RequestHandler = async (req, res, next) => {
   try {
     if (req.file) {
       console.log("❌", req.file?.filename);
@@ -58,6 +58,7 @@ const patchUserImage: RequestHandler = async (req, res, next) => {
         { img: `/${req.file?.filename}` },
         { where: { id: req?.user?.id } }
       );
+      console.log("✅이미지저장 :", { url: req.file });
       return res.status(200).json({
         fileName: req.file?.filename,
         userImgUrl: `/${req.file?.filename}`,
@@ -151,7 +152,7 @@ const unFollow: RequestHandler = async (req, res, next) => {
 export default {
   getMe,
   patchNickname,
-  patchUserImage,
+  uploadUserImage,
   deleteUser,
   getUser,
   follow,
