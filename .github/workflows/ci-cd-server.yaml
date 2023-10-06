@@ -43,7 +43,7 @@ jobs:
       - name: ⎔ Package dist Folder
         run: tar -czvf dist.tar.gz dist
 
-      - name: ⎔ Deploy to Amazon ECS
+      - name: ⎔ Deploy to Amazon EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_IP }}
