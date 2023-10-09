@@ -27,11 +27,12 @@ const upload = multer({
   storage: multerS3({
     s3,
     bucket: process.env.BUCKET_NAME as string,
+    acl: "public-read",
+    contentType: multerS3.AUTO_CONTENT_TYPE,
     key(req, file, cb) {
       const fileName = `original/${Date.now()}_${file.originalname}`;
       cb(null, fileName);
     },
-    acl: "public-read",
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB 제한
 
